@@ -13,6 +13,7 @@ use MongoDB\Driver\Manager;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Slim\App;
+use SlimApi\Models\StylesRepository;
 
 /**
  * Class ApiProvider
@@ -31,11 +32,12 @@ class ApiProvider implements ServiceProviderInterface
         };
 
         $pimple['styles_repository'] = function ($c) {
-
-            return new Collection(
-                new Manager($c['config']->get('db.dsn')),
-                $c['config']->get('db.dbName'),
-                $c['config']->get('db.stylesRepository')
+            return new StylesRepository(
+                new Collection(
+                    new Manager($c['config']->get('db.dsn')),
+                    $c['config']->get('db.dbName'),
+                    $c['config']->get('db.stylesRepository')
+                )
             );
         };
     }
