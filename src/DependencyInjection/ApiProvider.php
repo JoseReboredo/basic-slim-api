@@ -10,6 +10,7 @@ namespace SlimApi\DependencyInjection;
 
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Slim\App;
 
 /**
  * Class ApiProvider
@@ -18,9 +19,13 @@ use Pimple\ServiceProviderInterface;
  */
 class ApiProvider implements ServiceProviderInterface
 {
+    /**
+     * @param Container $pimple
+     */
     public function register(Container $pimple)
     {
-        // register some services and parameters
-        // on $pimple
+        $container['slim_app'] = function ($c) {
+            return new App();
+        };
     }
 }
