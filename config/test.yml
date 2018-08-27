@@ -1,2 +1,3 @@
-imports:
-  - local.yml
+db.dsn: "mongodb://localhost:27017"
+db.dbName: "basic_slim_api_test"
+db.stylesRepository: "styles"
