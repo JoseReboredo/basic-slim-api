@@ -11,7 +11,7 @@ namespace SlimApi\Controller;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\Stream;
-use SlimApi\Models\StylesRepository;
+use SlimApi\Models\StylesInterface;
 
 /**
  * Class StylesController
@@ -21,28 +21,30 @@ use SlimApi\Models\StylesRepository;
 class StylesController
 {
     /**
-     * @var StylesRepository
+     * @var StylesInterface
      */
     protected $stylesRepository;
 
-    public function __construct(StylesRepository $repository)
+    public function __construct(StylesInterface $repository)
     {
         $this->stylesRepository = $repository;
     }
 
     /**
      * @param Request $request
-     * @return Response $response
+     * @param Response $response
+     * @param array $args
+     * @return Response
      */
-    public function getStyles(Request $request, Response $response)
+    public function getStyles(Request $request, Response $response, array $args)
     {
         $params = $request->getParams();
         if (isset($params['search'])) {
-
+            $styles = $this->stylesRepository->getStylesBySearch($params['search']);
         } elseif (isset($params['tag'])) {
-
+            $styles = $this->stylesRepository->getStylesByTag($params['tag']);
         } else {
-            $styles = $this->stylesRepository->getStyles();
+            $styles = $this->stylesRepository->getAllStyles();
         }
 
         $styles = json_encode($styles);
