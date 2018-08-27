@@ -1,0 +1,57 @@
+[
+  {
+    "id": "2e6c0330-bb8a-4560-aa42-ad49397ad236",
+    "name: Nano Hair-strokes: Full Brow",
+    "tags: Eyebrows,brows,perfectbrows,microblading,nanoblading,Permanentmakeup",
+    "description": "Full brow hair-stroke application = maximum volume, definition, and symmetry.",
+    "status": "PUBLISHED",
+    "dateCreated": "2018-08-18 22:01:31",
+    "deleted": 0
+  },
+  {
+    "id": "725eb4f4-7601-478b-afad-310a700672c8",
+    "name": "Rainbow",
+    "tags": "nailart,rainbow,gelnailart",
+    "description": "Mica gave me rainbow tips! I love them. I�m on the way to AFROPUNK Brooklyn !!",
+    "status": "PUBLISHED",
+    "dateCreated": "2018-08-20 18:03:09",
+    "deleted": 0
+  },
+  {
+    "id": "748859ee-5550-4b5c-8c54-226d45dca6b2",
+    "name": "GOLD PUNK",
+    "tags": "nailart,gelnailart,foils,gold,black",
+    "description": "I'm going AFROPUNK and wanted punk with a bit of glam !!",
+    "status": "PUBLISHED",
+    "dateCreated": "2018-08-20 18:15:20",
+    "deleted": 0
+  },
+  {
+    "id": "aa44e7b2-170e-4a6b-a097-38ea910618de",
+    "name": "Choppy Lob",
+    "tags": "Shizen,Brooklyn",
+    "description": "Got four inches of dead summer hair hacked off. Super fast and exactly what I asked for! Amazing head massage too.",
+    "status": "DRAFT",
+    "dateCreated": "2018-08-20 22:54:19",
+    "deleted": 0
+  },
+  {
+    "id": "0ea56a80-2e3c-40b1-b994-70f4f51875bd",
+    "name": "Nano Hair-strokes: Full Brow",
+    "tags": "Eyebrows,brows,perfectbrows,microblading,nanoblading,Permanentmakeup",
+    "description": "Full brow hair-stroke application = maximum volume, definition, and symmetry.",
+    "status": "PUBLISHED",
+    "dateCreated": "2018-08-18 22:01:18",
+    "deleted": 0
+  },
+  {
+    "id": "9961c958-15cd-446d-b53e-c0d9aaed4bf5",
+    "name": "Nano Hair-strokes: Full Brow",
+    "tags": "Eyebrows,brows,perfectbrows,microblading,nanoblading,Permanentmakeup",
+    "description": "Full brow hair-stroke application = maximum volume, definition, and symmetry.",
+    "status": "PUBLISHED",
+    "dateCreated": "2018-08-18 22:01:31",
+    "deleted": 1
+  }
+]
+
