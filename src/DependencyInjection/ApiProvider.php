@@ -24,7 +24,7 @@ class ApiProvider implements ServiceProviderInterface
      */
     public function register(Container $pimple)
     {
-        $container['slim_app'] = function ($c) {
+        $pimple['slim_app'] = function ($c) {
             return new App();
         };
     }

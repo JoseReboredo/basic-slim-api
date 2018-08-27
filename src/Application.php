@@ -8,9 +8,11 @@
 
 namespace SlimApi;
 
+use Pimple\Container;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use Slim\App;
+use SlimApi\DependencyInjection\ApiProvider;
 
 /**
  * Class Application
@@ -25,11 +27,19 @@ class Application
     protected $slimApp;
 
     /**
+     * @var Container
+     */
+    protected $container;
+
+    /**
      * Application constructor.
      */
     public function __construct()
     {
-        $this->app = new App();
+        $this->container = new Container();
+        $this->container->register(new ApiProvider());
+
+        $this->slimApp = new $this->container['slim_app'];
     }
 
     /**
