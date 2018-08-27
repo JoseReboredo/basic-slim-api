@@ -34,9 +34,11 @@ class StylesRepository implements StylesInterface
 
     /**
      * Get all the available styles
+     *
+     * @param array
      */
     public function getStyles()
     {
-        // TODO: Implement getStyles() method.
+        return $this->collection->find()->toArray();
     }
 }
