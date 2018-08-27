@@ -59,12 +59,25 @@ class Application
      */
     public function runSlimApi()
     {
-        $this->app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
-            $name = $args['name'];
-            $response->getBody()->write("Hello, $name");
+        $this->initRoutes();
 
-            return $response;
+        $this->slimApp->run();
+    }
+
+    /**
+     * Init all the available routes for the Api
+     */
+    protected function initRoutes()
+    {
+        $stylesRepository = $this->container['styles_repository'];
+
+        // Routes
+        $this->slimApp->get('/styles', function (Request $request, Response $response, array $args) use ($stylesRepository) {
+            $controller = new StylesController($stylesRepository);
+            return $controller->getStyles($request, $response, $args);
         });
-        $this->app->run();
+
+        //return; //error
+
     }
 }
