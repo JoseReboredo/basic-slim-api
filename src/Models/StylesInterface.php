@@ -21,5 +21,20 @@ interface StylesInterface
      *
      * @return
      */
-    public function getStyles();
+    public function getAllStyles();
+
+    /**
+     * Get all styles that match a given tag
+     *
+     * @param string $tag
+     * @return array
+     */
+    public function getStylesByTag($tag);
+
+    /**
+     * Get all styles that match a search
+     *
+     * @param string $value
+     */
+    public function getStylesBySearch($value);
 }
