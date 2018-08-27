@@ -24,11 +24,12 @@ class Config
 
     /**
      * @param string $env
+     * @param string $configPath
      * @throws ConfigException  if it is not able to load a file
      */
     public function __construct($env, $configPath)
     {
-        $file = $configPath . $env . 'yml';
+        $file = $configPath . '/' . $env . '.yml';
         if (file_exists($file)) {
             $parser = new Parser();
             $this->config = $parser->parse(file_get_contents($file));

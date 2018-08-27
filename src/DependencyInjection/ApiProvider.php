@@ -8,6 +8,8 @@
 
 namespace SlimApi\DependencyInjection;
 
+use MongoDB\Collection;
+use MongoDB\Driver\Manager;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Slim\App;
@@ -26,6 +28,15 @@ class ApiProvider implements ServiceProviderInterface
     {
         $pimple['slim_app'] = function ($c) {
             return new App();
+        };
+
+        $pimple['styles_repository'] = function ($c) {
+
+            return new Collection(
+                new Manager($c['config']->get('db.dsn')),
+                $c['config']->get('db.dbName'),
+                $c['config']->get('db.stylesRepository')
+            );
         };
     }
 }
