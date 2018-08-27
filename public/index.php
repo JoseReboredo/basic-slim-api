@@ -2,7 +2,7 @@
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-$app = new \SlimApi\Application();
+$app = new \SlimApi\Application('local');
 
 try {
     $app->runSlimApi();
