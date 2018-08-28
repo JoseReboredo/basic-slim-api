@@ -45,8 +45,8 @@ class StylesRepository implements StylesInterface
      */
     public function getAllStyles()
     {
-        $cursor = $this->collection->find([],['projection' => ['_id' => 0]]);
-        return $this->formatDocuments($cursor);
+        $documents = $this->collection->find([],['projection' => ['_id' => 0]])->toArray();
+        return $this->formatDocuments($documents);
     }
 
     /**
@@ -57,15 +57,15 @@ class StylesRepository implements StylesInterface
      */
     public function getStylesByTag($tag)
     {
-        $cursor = $this->collection->find(
+        $documents = $this->collection->find(
             [
                 'tags' => new Regex('^'.$tag.'$', 'i')
             ],
             [
                 'projection' => ['_id' => 0]
             ]
-        );
-        return $this->formatDocuments($cursor);
+        )->toArray();
+        return $this->formatDocuments($documents);
     }
 
     /**
@@ -76,7 +76,7 @@ class StylesRepository implements StylesInterface
      */
     public function getStylesBySearch($value)
     {
-        $cursor = $this->collection->find(
+        $documents = $this->collection->find(
             [
                 '$or' => [
                     ['tags' => new Regex('^'.$value.'$', 'i')],
@@ -87,20 +87,18 @@ class StylesRepository implements StylesInterface
             [
                 'projection' => ['_id' => 0]
             ]
-        );
-        return $this->formatDocuments($cursor);
+        )->toArray();
+        return $this->formatDocuments($documents);
     }
 
     /**
      * Format the documents returned by th DB
      *
-     * @param Cursor $cursor
+     * @param array $documents
      * @return array
      */
-    private function formatDocuments(Cursor $cursor)
+    private function formatDocuments(array $documents)
     {
-        $documents = $cursor->toArray();
-
         foreach ($documents as &$doc) {
             if (isset($doc['tags'])) {
                 $doc['tags'] = implode(',', $doc['tags']);
