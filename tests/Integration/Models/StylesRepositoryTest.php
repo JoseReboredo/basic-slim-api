@@ -11,10 +11,8 @@ namespace SlimApi\Tests\Integration\Models;
 use MongoDB\Collection;
 use MongoDB\Driver\Manager;
 use PHPUnit\Framework\TestCase;
-use Slim\Container;
-use SlimApi\Config\Config;
-use SlimApi\DependencyInjection\ApiProvider;
 use SlimApi\Models\StylesRepository;
+use SlimApi\Tests\ContainerTestTrait;
 
 /**
  * Class StylesRepositoryTest
@@ -23,6 +21,8 @@ use SlimApi\Models\StylesRepository;
  */
 class StylesRepositoryTest extends TestCase
 {
+    use ContainerTestTrait;
+
     /**
      * @var StylesRepository
      */
@@ -43,8 +43,7 @@ class StylesRepositoryTest extends TestCase
      */
     public function setUp()
     {
-        $container = new Container((['config' => new Config('test', __DIR__ . '/../../../config')]));
-        $container->register(new ApiProvider());
+        $container = $this->setUpContainer();
 
         $this->repository = $container['styles_repository'];
 

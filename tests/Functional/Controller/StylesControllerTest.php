@@ -17,11 +17,10 @@ use Slim\Http\Request;
 use Slim\Http\RequestBody;
 use Slim\Http\Response;
 use Slim\Http\Uri;
-use SlimApi\Config\Config;
 use SlimApi\Controller\StylesController;
-use SlimApi\DependencyInjection\ApiProvider;
 use SlimApi\Models\RepositoryException\RepositoryException;
 use SlimApi\Models\StylesRepository;
+use SlimApi\Tests\ContainerTestTrait;
 
 /**
  * Class StylesControllerTest
@@ -29,6 +28,8 @@ use SlimApi\Models\StylesRepository;
  */
 class StylesControllerTest extends TestCase
 {
+    use ContainerTestTrait;
+
     /**
      * @var StylesController
      */
@@ -46,8 +47,7 @@ class StylesControllerTest extends TestCase
 
     public function setUp()
     {
-        $container = new Container((['config' => new Config('test', __DIR__ . '/../../../config')]));
-        $container->register(new ApiProvider());
+        $container = $this->setUpContainer();
 
         $this->controller = $container['styles_controller'];
 

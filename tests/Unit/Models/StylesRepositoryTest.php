@@ -28,6 +28,9 @@ class StylesRepositoryTest extends TestCase
      */
     protected $repository;
 
+    /**
+     * @var Collection
+     */
     protected $collection;
 
     /**
