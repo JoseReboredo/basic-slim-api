@@ -99,11 +99,6 @@ class StylesRepository implements StylesInterface
      */
     private function formatDocuments(Cursor $cursor)
     {
-        $cursor->setTypeMap([
-            'root' => 'array',
-            'document' => 'array',
-            'array' => 'array'
-        ]);
         $documents = $cursor->toArray();
 
         foreach ($documents as &$doc) {
