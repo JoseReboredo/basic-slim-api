@@ -10,6 +10,7 @@ namespace SlimApi\Models;
 
 use MongoDB\BSON\Regex;
 use MongoDB\Collection;
+use MongoDB\Driver\Cursor;
 
 /**
  * Class StylesRepository
@@ -44,7 +45,8 @@ class StylesRepository implements StylesInterface
      */
     public function getAllStyles()
     {
-        return $this->collection->find()->toArray();
+        $cursor = $this->collection->find([],['projection' => ['_id' => 0]]);
+        return $this->formatDocuments($cursor);
     }
 
     /**
@@ -55,7 +57,15 @@ class StylesRepository implements StylesInterface
      */
     public function getStylesByTag($tag)
     {
-        return $this->collection->find(['tags' => new Regex('^'.$tag.'$', 'i')])->toArray();
+        $cursor = $this->collection->find(
+            [
+                'tags' => new Regex('^'.$tag.'$', 'i')
+            ],
+            [
+                'projection' => ['_id' => 0]
+            ]
+        );
+        return $this->formatDocuments($cursor);
     }
 
     /**
@@ -66,14 +76,41 @@ class StylesRepository implements StylesInterface
      */
     public function getStylesBySearch($value)
     {
-        return $this->collection->find(
+        $cursor = $this->collection->find(
             [
                 '$or' => [
                     ['tags' => new Regex('^'.$value.'$', 'i')],
-                    ['name' => new Regex('^'.$value.'$', 'i')],
-                    ['search' => new Regex('^'.$value.'$', 'i')],
+                    ['name' => new Regex($value, 'i')],
+                    ['description' => new Regex($value, 'i')],
                 ]
+            ],
+            [
+                'projection' => ['_id' => 0]
             ]
-        )->toArray();
+        );
+        return $this->formatDocuments($cursor);
+    }
+
+    /**
+     * Format the documents returned by th DB
+     *
+     * @param Cursor $cursor
+     * @return array
+     */
+    private function formatDocuments(Cursor $cursor)
+    {
+        $cursor->setTypeMap([
+            'root' => 'array',
+            'document' => 'array',
+            'array' => 'array'
+        ]);
+        $documents = $cursor->toArray();
+
+        foreach ($documents as &$doc) {
+            if (isset($doc['tags'])) {
+                $doc['tags'] = implode(',', $doc['tags']);
+            }
+        }
+        return $documents;
     }
 }

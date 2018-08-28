@@ -34,6 +34,11 @@ class StylesRepositoryTest extends TestCase
     protected $collection;
 
     /**
+     * @var array
+     */
+    protected $documents;
+
+    /**
      * SetUp.
      */
     public function setUp()
@@ -49,8 +54,15 @@ class StylesRepositoryTest extends TestCase
             $container['config']->get('db.stylesRepository')
         );
 
-        $documents = json_decode(file_get_contents(__DIR__ . '/../../fixtures/styles.json'), true);
-        $this->collection->insertMany($documents);
+        $this->documents = json_decode(file_get_contents(__DIR__ . '/../../fixtures/styles.json'), true);
+
+        $docs = $this->documents;
+        foreach ($docs as &$d) {
+            if (!empty($d['tags'])) {
+                $d['tags'] = explode(',', $d['tags']);
+            }
+        }
+        $this->collection->insertMany($docs);
     }
 
     /**
@@ -64,8 +76,60 @@ class StylesRepositoryTest extends TestCase
     /**
      * @group Models
      */
-    public function testWorks()
+    public function testGetAllStylesWorks()
     {
+        $res = $this->repository->getAllStyles();
 
+        $this->assertEquals(6, count($res));
+        $this->assertEquals($this->documents, $res);
+    }
+
+    /**
+     * @group Models
+     */
+    public function testGetStylesByTagWorks()
+    {
+        $res = $this->repository->getStylesByTag('Brooklyn');
+
+        $this->assertEquals(1, count($res));
+        $this->assertEquals([$this->documents[3]], $res);
+
+    }
+
+    /**
+     * @group Models
+     */
+    public function testGetStylesBySearchWorksMatchInTag()
+    {
+        $expectedDocs[] = $this->documents[0];
+        $expectedDocs[] = $this->documents[4];
+        $expectedDocs[] = $this->documents[5];
+
+        $res = $this->repository->getStylesBySearch('microblading');
+
+        $this->assertEquals(3, count($res));
+        $this->assertEquals($expectedDocs, $res);
+    }
+
+    /**
+     * @group Models
+     */
+    public function testGetStylesBySearchWorksMatchInName()
+    {
+        $res = $this->repository->getStylesBySearch('gold');
+
+        $this->assertEquals(1, count($res));
+        $this->assertEquals([$this->documents[2]], $res);
+    }
+
+    /**
+     * @group Models
+     */
+    public function testGetStylesBySearchWorksMatchInDescription()
+    {
+        $res = $this->repository->getStylesBySearch('dead');
+
+        $this->assertEquals(1, count($res));
+        $this->assertEquals([$this->documents[3]], $res);
     }
 }
