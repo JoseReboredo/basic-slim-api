@@ -12,12 +12,16 @@ use MongoDB\Collection;
 use MongoDB\Driver\Manager;
 use PHPUnit\Framework\TestCase;
 use Pimple\Container;
+use Slim\Http\Headers;
 use Slim\Http\Request;
+use Slim\Http\RequestBody;
 use Slim\Http\Response;
 use Slim\Http\Uri;
 use SlimApi\Config\Config;
 use SlimApi\Controller\StylesController;
 use SlimApi\DependencyInjection\ApiProvider;
+use SlimApi\Models\RepositoryException\RepositoryException;
+use SlimApi\Models\StylesRepository;
 
 /**
  * Class StylesControllerTest
@@ -30,33 +34,129 @@ class StylesControllerTest extends TestCase
      */
     protected $controller;
 
+    /**
+     * @var string Json array with all the documents
+     */
+    protected $documents;
+
+    /**
+     * @var Collection
+     */
+    protected $collection;
+
     public function setUp()
     {
-        $container = new Container((['config' => new Config('test', __DIR__ . '/../../config')]));
+        $container = new Container((['config' => new Config('test', __DIR__ . '/../../../config')]));
         $container->register(new ApiProvider());
 
         $this->controller = $container['styles_controller'];
 
-        $collection = new Collection(
+        $this->collection = new Collection(
             new Manager($container['config']->get('db.dsn')),
             $container['config']->get('db.dbName'),
             $container['config']->get('db.stylesRepository')
         );
 
-        $documents = json_decode(file_get_contents(__DIR__ . '/../../fixtures/styles.json'), true);
-        foreach ($documents as &$d) {
+        $this->documents = json_decode(file_get_contents(__DIR__ . '/../../fixtures/styles.json'), true);
+        $docs = $this->documents;
+        foreach ($docs as &$d) {
             if (!empty($d['tags'])) {
                 $d['tags'] = explode(',', $d['tags']);
             }
         }
-        $collection->insertMany($documents);
+        $this->collection->insertMany($docs);
+    }
+
+    public function tearDown()
+    {
+        $this->collection->drop();
     }
 
     /**
      * @group Controller
      */
-    public function testStylesEndPointWorksFine()
+    public function testStylesEndPointGetBackAllTheDocuments()
     {
-        $this->controller->getStyles(new Requet(), new Response(), []);
+        $request = $this->getRequest('');
+
+        $response = $this->controller->getStyles($request, new Response(), []);
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(json_encode($this->documents), (string)$response->getBody());
+    }
+
+    /**
+     * @group Controller
+     */
+    public function testStylesEndPointGetDocumentsUsingTagParam()
+    {
+        $request = $this->getRequest('{"tag":"Rainbow"}');
+
+        $response = $this->controller->getStyles($request, new Response(), []);
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(json_encode([$this->documents[1]]), (string)$response->getBody());
+    }
+
+    /**
+     * @group Controller
+     */
+    public function testStylesEndPointGetDocumentsUsingSearchParam()
+    {
+        // Tags are matched before the description
+        $expectedResult[] = $this->documents[3];
+        $expectedResult[] = $this->documents[1];
+
+        $request = $this->getRequest('{"search":"brooklyn"}');
+
+        $response = $this->controller->getStyles($request, new Response(), []);
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(json_encode($expectedResult), (string)$response->getBody());
+    }
+
+    /**
+     * @group Controller
+     */
+    public function testGet500OnDBException()
+    {
+        $collection = $this->getMockBuilder(StylesRepository::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAllStyles'])
+            ->getMock();
+        $collection->method('getAllStyles')
+            ->willThrowException(new RepositoryException('fake exception'));
+
+        $controller = new StylesController($collection);
+
+        $request = $this->getRequest('');
+
+        $response = $controller->getStyles($request, new Response(), []);
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertEquals(500, $response->getStatusCode());
+    }
+
+    /**
+     * string $body
+     */
+    private function getRequest($body)
+    {
+        $reqBody = new RequestBody();
+        if (!is_null($body)) {
+            $reqBody->write($body);
+        }
+
+        return (new Request(
+            'GET',
+            Uri::createFromString('www.fake.com'),
+            new Headers(),
+            [],
+            [],
+            $reqBody
+        ))->withHeader('Content-type', 'application/json');
     }
 }
