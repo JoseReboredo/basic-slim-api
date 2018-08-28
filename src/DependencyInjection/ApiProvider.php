@@ -39,9 +39,18 @@ class ApiProvider implements ServiceProviderInterface
         $pimple['styles_repository'] = function ($c) {
             return new StylesRepository(
                 new Collection(
-                    new Manager($c['config']->get('db.dsn')),
+                    new Manager(
+                        $c['config']->get('db.dsn')
+                    ),
                     $c['config']->get('db.dbName'),
-                    $c['config']->get('db.stylesRepository')
+                    $c['config']->get('db.stylesRepository'),
+                    [
+                        'typeMap' => [
+                            'root' => 'array',
+                            'document' => 'array',
+                            'array' => 'array'
+                        ]
+                    ]
                 )
             );
         };
