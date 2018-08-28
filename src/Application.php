@@ -69,15 +69,14 @@ class Application
      */
     protected function initRoutes()
     {
-        $stylesRepository = $this->container['styles_repository'];
+        $stylesController = $this->container['styles_controller'];
 
         // Routes
-        $this->slimApp->get('/styles', function (Request $request, Response $response, array $args) use ($stylesRepository) {
-            $controller = new StylesController($stylesRepository);
-            return $controller->getStyles($request, $response, $args);
+        $this->slimApp->get('/styles', function (Request $request, Response $response, array $args) use ($stylesController) {
+            return $stylesController->getStyles($request, $response, $args);
         });
 
-        //return; //error
-
+        $response = new Response();
+        $response->withStatus(404, 'Resource not found');
     }
 }

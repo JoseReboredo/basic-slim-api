@@ -13,6 +13,7 @@ use MongoDB\Driver\Manager;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Slim\App;
+use SlimApi\Controller\StylesController;
 use SlimApi\Models\StylesRepository;
 
 /**
@@ -53,6 +54,10 @@ class ApiProvider implements ServiceProviderInterface
                     ]
                 )
             );
+        };
+
+        $pimple['styles_controller'] = function ($c) {
+            return new StylesController($c['styles_repository']);
         };
     }
 }
