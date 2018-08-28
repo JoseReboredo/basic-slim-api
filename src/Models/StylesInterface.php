@@ -8,6 +8,8 @@
 
 namespace SlimApi\Models;
 
+use SlimApi\Models\RepositoryException\RepositoryException;
+
 /**
  * Interface StylesInterface
  *
@@ -32,6 +34,7 @@ interface StylesInterface
      *  ],
      * ...
      *]
+     * @throws RepositoryException
      */
     public function getAllStyles();
 
@@ -53,6 +56,7 @@ interface StylesInterface
      *  ],
      * ...
      *]
+     * @throws RepositoryException
      */
     public function getStylesByTag($tag);
 
@@ -74,6 +78,7 @@ interface StylesInterface
      *  ],
      * ...
      *]
+     * @throws RepositoryException
      */
     public function getStylesBySearch($value);
 }

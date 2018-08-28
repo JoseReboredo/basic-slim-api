@@ -11,6 +11,7 @@ namespace SlimApi\Models;
 use MongoDB\BSON\Regex;
 use MongoDB\Collection;
 use MongoDB\Driver\Cursor;
+use SlimApi\Models\RepositoryException\RepositoryException;
 
 /**
  * Class StylesRepository
@@ -42,10 +43,15 @@ class StylesRepository implements StylesInterface
      * Get all the available styles
      *
      * @return array
+     * @throws RepositoryException
      */
     public function getAllStyles()
     {
+        try {
         $documents = $this->collection->find([],['projection' => ['_id' => 0]])->toArray();
+        } catch (\Exception $e) {
+            throw new RepositoryException('Issue withe MongoDB:' . $e->getMessage());
+        }
         return $this->formatDocuments($documents);
     }
 
@@ -54,9 +60,11 @@ class StylesRepository implements StylesInterface
      *
      * @param string $tag
      * @return array
+     * @throws RepositoryException
      */
     public function getStylesByTag($tag)
     {
+        try {
         $documents = $this->collection->find(
             [
                 'tags' => new Regex('^'.$tag.'$', 'i')
@@ -65,6 +73,9 @@ class StylesRepository implements StylesInterface
                 'projection' => ['_id' => 0]
             ]
         )->toArray();
+        } catch (\Exception $e) {
+            throw new RepositoryException('Issue withe MongoDB:' . $e->getMessage());
+        }
         return $this->formatDocuments($documents);
     }
 
@@ -73,21 +84,27 @@ class StylesRepository implements StylesInterface
      *
      * @param string $value
      * @return array
+     * @throws RepositoryException
      */
     public function getStylesBySearch($value)
     {
-        $documents = $this->collection->find(
-            [
-                '$or' => [
-                    ['tags' => new Regex('^'.$value.'$', 'i')],
-                    ['name' => new Regex($value, 'i')],
-                    ['description' => new Regex($value, 'i')],
+        try {
+            $documents = $this->collection->find(
+                [
+                    '$or' => [
+                        ['tags' => new Regex('^' . $value . '$', 'i')],
+                        ['name' => new Regex($value, 'i')],
+                        ['description' => new Regex($value, 'i')],
+                    ]
+                ],
+                [
+                    'projection' => ['_id' => 0]
                 ]
-            ],
-            [
-                'projection' => ['_id' => 0]
-            ]
-        )->toArray();
+            )->toArray();
+        } catch (\Exception $e) {
+            throw new RepositoryException('Issue withe MongoDB:' . $e->getMessage());
+        }
+
         return $this->formatDocuments($documents);
     }
 

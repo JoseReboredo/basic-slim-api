@@ -10,7 +10,9 @@ namespace SlimApi\Tests\Unit\Models;
 
 use MongoDB\Collection;
 use MongoDB\Driver\Cursor;
+use MongoDB\Driver\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase;
+use SlimApi\Models\RepositoryException\RepositoryException;
 use SlimApi\Models\StylesInterface;
 use SlimApi\Models\StylesRepository;
 
@@ -71,5 +73,19 @@ class StylesRepositoryTest extends TestCase
         $result = $this->repository->getAllStyles();
 
         $this->assertEquals($expectedDocuments, $result);
+    }
+
+    /**
+     * @group Models
+     */
+    public function testRepositoryExceptionIsThrown()
+    {
+        $this->expectException(RepositoryException::class);
+
+        $this->collection
+            ->method('find')
+            ->willThrowException(new RuntimeException('Fake exception'));
+
+        $this->repository->getAllStyles();
     }
 }
